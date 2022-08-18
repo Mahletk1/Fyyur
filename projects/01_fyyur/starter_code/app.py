@@ -139,8 +139,8 @@ def search_venues():
   # TODO: implement search on venues with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  venue_query = Venue.query.filter(Venue.name.ilike('%' + request.form['search_term'] + '%'))
-  venue_list = list(venue_query)
+  venue= Venue.query.filter(Venue.name.ilike('%' + request.form['search_term'] + '%'))
+  venue_list = list(venue)
   response = {
     "count":len(venue_list),
     "data": venue_list
@@ -170,23 +170,23 @@ def show_venue(venue_id):
         genres = venue.genres.split(",")
         
         # Get a list of shows, and count the ones in the past and future
-        past_shows = []
-        past_shows_count = 0
-        upcoming_shows = []
-        upcoming_shows_count = 0
+        past_shows_list = []
+        pastShowsCount = 0
+        upcoming_shows_list = []
+        upcomingShowsCount = 0
         now = datetime.now()
         for show in venue.shows:
             if show.start_time > now:
-                upcoming_shows_count += 1
-                upcoming_shows.append({
+                upcomingShowsCount += 1
+                upcoming_shows_list.append({
                     "artist_id": show.artist_id,
                     "artist_name": show.artists.name,
                     "artist_image_link": show.artists.image_link,
                     "start_time": format_datetime(str(show.start_time))
                 })
             if show.start_time < now:
-                past_shows_count += 1
-                past_shows.append({
+                pastShowsCount += 1
+                past_shows_list.append({
                     "artist_id": show.artist_id,
                     "artist_name": show.artists.name,
                     "artist_image_link": show.artists.image_link,
@@ -207,10 +207,10 @@ def show_venue(venue_id):
             "seeking_talent": venue.seeking_talent,
             "seeking_description": venue.seeking_description,
             "image_link": venue.image_link,
-            "past_shows": past_shows,
-            "past_shows_count": past_shows_count,
-            "upcoming_shows": upcoming_shows,
-            "upcoming_shows_count": upcoming_shows_count
+            "past_shows": past_shows_list,
+            "past_shows_count": pastShowsCount,
+            "upcoming_shows": upcoming_shows_list,
+            "upcoming_shows_count": upcomingShowsCount
         }
 
   # data1={
@@ -373,10 +373,10 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
-  Artist_query = Artist.query.filter(Artist.name.ilike('%' + request.form['search_term'] + '%'))
-  artist_list = list(Artist_query)
+  artistQuery = Artist.query.filter(Artist.name.ilike('%' + request.form['search_term'] + '%'))
+  artist_list = list(artistQuery)
   data = []
-  for artist in Artist_query:
+  for artist in artistQuery:
     data.append({
       "id": artist.id,
       "name": artist.name,
@@ -409,16 +409,16 @@ def show_artist(artist_id):
       # genres = [ genre for genre in venue.genres ]
       genres = artist.genres.split(",")
 
-      past_shows = []
-      past_shows_count = 0
-      upcoming_shows = []
-      upcoming_shows_count = 0
+      past_shows_list = []
+      pastShowsCount = 0
+      upcoming_shows_list = []
+      upcomingShowsCount = 0
       now = datetime.now()
 
       for show in artist.shows:
         if show.start_time>now:
-          upcoming_shows_count+=1
-          upcoming_shows.append({
+          upcomingShowsCount+=1
+          upcoming_shows_list.append({
             "venue_id": show.venue_id,
             "venue_name": show.venues.name,
             "venue_image_link": show.venues.image_link,
@@ -426,8 +426,8 @@ def show_artist(artist_id):
           })
 
           if show.start_time<now:
-            past_shows_count+=1
-            past_shows.append({
+            pastShowsCount+=1
+            past_shows_list.append({
               "venue_id": show.venue_id,
               "venue_name": show.venues.name,
               "venue_image_link": show.venues.image_link,
@@ -445,10 +445,10 @@ def show_artist(artist_id):
     "seeking_venue": artist.seeking_venue,
     "seeking_description": artist.seeking_description,
     "image_link": artist.image_link,
-    "past_shows": past_shows,
-    "upcoming_shows": upcoming_shows,
-    "past_shows_count": past_shows_count,
-    "upcoming_shows_count": upcoming_shows_count,
+    "past_shows": past_shows_list,
+    "upcoming_shows": upcoming_shows_list,
+    "past_shows_count": pastShowsCount,
+    "upcoming_shows_count": upcomingShowsCount,
   }
 
   # data1={
